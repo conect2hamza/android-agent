@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nothing is eligible for Android's automatic cloud backup. The user's tasks, chat history and
+  memories stay on the device; the only way data leaves is the explicit, user-initiated export.
+-->
+<full-backup-content>
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="file" path="." />
+</full-backup-content>
