@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  # Needed to publish the APK as a release asset.
+  contents: write
 
 jobs:
   build:
@@ -50,6 +51,23 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      # A workflow artifact downloads as a zip and needs a logged-in GitHub session, which is awkward
+      # on a phone. A release asset is a direct link the device browser can install from.
+      - name: Publish APK to the rolling debug release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-latest
+          name: Debug build (latest)
+          body: |
+            Debug APK built from `${{ github.sha }}` on `${{ github.ref_name }}`.
+
+            Signed with the standard Android debug key, so it installs on any device with
+            "install unknown apps" enabled for your browser. Not for distribution.
+          prerelease: true
+          make_latest: false
+          files: app/build/outputs/apk/debug/*.apk
 
       - name: Upload test reports
         if: always()
