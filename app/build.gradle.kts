@@ -90,7 +90,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
+    // The core icon set only. material-icons-extended ships thousands of vectors for the five this
+    // app uses, and a debug build does not run R8 to strip them: it was 40 MB of the APK's 59 MB.
+    implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

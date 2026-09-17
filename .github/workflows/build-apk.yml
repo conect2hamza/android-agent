@@ -54,6 +54,15 @@ jobs:
 
       # A workflow artifact downloads as a zip and needs a logged-in GitHub session, which is awkward
       # on a phone. A release asset is a direct link the device browser can install from.
+      # Published in the release notes so a failed install can be checked against the real file
+      # rather than guessed at: a truncated download is a common cause of "App not installed".
+      - name: Describe the APK
+        id: apk
+        run: |
+          APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          echo "sha256=$(sha256sum "$APK" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "bytes=$(stat -c%s "$APK")" >> "$GITHUB_OUTPUT"
+
       - name: Publish APK to the rolling debug release
         if: success()
         uses: softprops/action-gh-release@v2
@@ -63,8 +72,12 @@ jobs:
           body: |
             Debug APK built from `${{ github.sha }}` on `${{ github.ref_name }}`.
 
-            Signed with the standard Android debug key, so it installs on any device with
-            "install unknown apps" enabled for your browser. Not for distribution.
+            - Size: `${{ steps.apk.outputs.bytes }}` bytes
+            - SHA-256: `${{ steps.apk.outputs.sha256 }}`
+
+            Signed with the repository's committed debug key, so every build installs over the last
+            one. If you get "App not installed", uninstall any existing copy first, and check the
+            downloaded file against the SHA-256 above before anything else. Not for distribution.
           prerelease: true
           make_latest: false
           files: app/build/outputs/apk/debug/*.apk

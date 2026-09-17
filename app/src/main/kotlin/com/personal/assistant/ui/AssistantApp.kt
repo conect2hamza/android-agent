@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -47,11 +47,13 @@ private data class Destination(val route: String, val label: String, val icon: I
  * the assistant has remembered.
  */
 private val BOTTOM_DESTINATIONS = listOf(
-    Destination("chat", "Chat", Icons.Filled.Chat),
+    // Drawn from the core icon set so the extended one does not have to ship; a few are
+    // approximations of what the tab actually does.
+    Destination("chat", "Chat", Icons.Filled.Email),
     Destination("home", "Home", Icons.Filled.Home),
-    Destination("calendar", "Calendar", Icons.Filled.CalendarMonth),
+    Destination("calendar", "Calendar", Icons.Filled.DateRange),
     Destination("tasks", "Tasks", Icons.Filled.CheckCircle),
-    Destination("reports", "Reports", Icons.Filled.Insights),
+    Destination("reports", "Reports", Icons.Filled.Info),
 )
 
 // Memory and Settings are reached from the Home screen rather than the bar. Material's navigation
