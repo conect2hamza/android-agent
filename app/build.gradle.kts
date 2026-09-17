@@ -16,9 +16,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Keeps the generated Room schema in version control so migrations can be reviewed.
-        ksp { arg("room.schemaLocation", "$projectDir/schemas") }
     }
 
     buildTypes {
@@ -56,6 +53,12 @@ android {
         warningsAsErrors = false
         abortOnError = true
     }
+}
+
+// Keeps the generated Room schema in version control so future migrations can be reviewed in a diff.
+// This is a project-level extension: it does not exist inside android.defaultConfig.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
