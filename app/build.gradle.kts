@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.work.runtime.ktx)
+    // BiometricPrompt must be hosted by a FragmentActivity, which is why MainActivity extends one.
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.biometric)
     implementation(libs.kotlinx.coroutines.android)
 

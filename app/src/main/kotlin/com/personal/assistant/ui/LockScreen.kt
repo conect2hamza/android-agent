@@ -1,6 +1,6 @@
 package com.personal.assistant.ui
 
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import androidx.core.content.ContextCompat
  * passcode to forget, and no hash for anyone to attack.
  */
 @Composable
-fun LockScreen(activity: ComponentActivity, onUnlocked: () -> Unit) {
+fun LockScreen(activity: FragmentActivity, onUnlocked: () -> Unit) {
     var error by remember { mutableStateOf<String?>(null) }
     var prompting by remember { mutableStateOf(false) }
 
@@ -48,7 +48,7 @@ fun LockScreen(activity: ComponentActivity, onUnlocked: () -> Unit) {
             activity,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: AuthenticationResult) {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     prompting = false
                     onUnlocked()
                 }

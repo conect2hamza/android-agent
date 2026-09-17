@@ -2,7 +2,6 @@ package com.personal.assistant
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,12 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import com.personal.assistant.data.repository.AppSettings
 import com.personal.assistant.ui.AssistantApp
 import com.personal.assistant.ui.theme.AssistantTheme
 import android.os.Build
 
-class MainActivity : ComponentActivity() {
+/**
+ * Extends [FragmentActivity] rather than ComponentActivity because BiometricPrompt requires a
+ * fragment host. FragmentActivity is itself a ComponentActivity, so Compose's setContent and the
+ * activity-result APIs are unaffected.
+ */
+class MainActivity : FragmentActivity() {
 
     private val container: AppContainer
         get() = (application as AssistantApplication).container
