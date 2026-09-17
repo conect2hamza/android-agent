@@ -9,6 +9,8 @@ plugins {
 // see util/MiniJson.kt for why.
 dependencies {
     testImplementation(libs.junit)
+    // Only the tests need a coroutine runner; the module itself uses plain `suspend`.
+    testImplementation(libs.kotlinx.coroutines.core)
 }
 
 // Targets Java 17 bytecode (what the Android toolchain consumes) without pinning a toolchain, so the

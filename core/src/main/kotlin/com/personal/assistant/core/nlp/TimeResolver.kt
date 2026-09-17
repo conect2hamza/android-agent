@@ -29,6 +29,13 @@ object TimeResolver {
     private val AT_WORDS = setOf("at", "@", "by", "around", "from", "se", "سے")
     private val RANGE_WORDS = setOf("to", "till", "until", "untill", "-", "--", "–", "—", "tak", "se", "تک", "سے")
 
+    /**
+     * "to" introduces a time in "move my website task to 6", but not in "talk to 3 people". A bare
+     * hour after one of these counts as a time only when nothing non-temporal follows it, which is
+     * narrow enough to keep the false positives out.
+     */
+    private val RANGE_INTRODUCERS = setOf("to", "till", "until", "tak", "\u062A\u06A9")
+
     private val HH_MM = Regex("""^(\d{1,2})[:.](\d{2})$""")
     private val HH_MERIDIEM = Regex("""^(\d{1,2})(am|pm)$""")
     private val HH_MM_MERIDIEM = Regex("""^(\d{1,2})[:.](\d{2})(am|pm)$""")
@@ -155,6 +162,9 @@ object TimeResolver {
         val oclock = next != null && next.text in Lexicon.OCLOCK_WORDS
         val introduced = previous != null &&
             (previous.text in AT_WORDS || Lexicon.DAY_PARTS.containsKey(previous.text))
+        val introducedByRange = previous != null &&
+            previous.text in RANGE_INTRODUCERS &&
+            (next == null || Lexicon.DAY_PARTS.containsKey(next.text) || next.text in Lexicon.OCLOCK_WORDS)
         val afterDayWord = previous != null &&
             (Lexicon.RELATIVE_DAYS.containsKey(previous.text) || Lexicon.WEEKDAYS.containsKey(previous.text))
 
@@ -163,7 +173,7 @@ object TimeResolver {
             (next.text in Lexicon.HOUR_WORDS || next.text in Lexicon.MINUTE_WORDS)
         if (followedByUnit) return null
 
-        val isTime = explicitPm != null || oclock || introduced || afterDayWord
+        val isTime = explicitPm != null || oclock || introduced || introducedByRange || afterDayWord
         if (!isTime) return null
 
         val time = build(hour, 0, explicitPm, dayPart) ?: return null
