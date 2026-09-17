@@ -55,14 +55,14 @@ class ChatRepository(
 
     suspend fun clear(conversationId: Long) = dao.deleteMessages(conversationId)
 
-    suspend fun clearAll() = dao.clearHistory()
+    suspend fun clearAll() = dao.deleteAllConversations()
 
     suspend fun allConversations(): List<Conversation> = dao.allConversations().map { it.toModel() }
 
     suspend fun allMessages(): List<Message> = dao.allMessages().map { it.toModel(crypto) }
 
     suspend fun replaceAll(conversations: List<Conversation>, messages: List<Message>) {
-        dao.clearHistory()
+        dao.deleteAllConversations()
         dao.insertConversations(conversations.map { it.toEntity() })
         dao.insertMessages(messages.map { it.toEntity(crypto) })
     }

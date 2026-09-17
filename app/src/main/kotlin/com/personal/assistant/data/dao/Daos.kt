@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
 import com.personal.assistant.data.entity.ActivityLogEntity
@@ -109,7 +108,7 @@ interface TaskDao {
         LIMIT :limit
         """,
     )
-    suspend fun search(needle: String, limit: Int = 50): List<TaskEntity>
+    suspend fun search(needle: String, limit: Int): List<TaskEntity>
 
     @Query("SELECT * FROM tasks WHERE status IN (:statuses) AND dateEpochDay <= :throughEpochDay")
     suspend fun withStatusUpTo(statuses: List<String>, throughEpochDay: Long): List<TaskEntity>
@@ -231,7 +230,7 @@ interface ChatDao {
         LIMIT :limit
         """,
     )
-    fun observeMessages(conversationId: Long, limit: Int = 200): Flow<List<MessageEntity>>
+    fun observeMessages(conversationId: Long, limit: Int): Flow<List<MessageEntity>>
 
     @Query("SELECT * FROM messages ORDER BY timestampEpochSecond")
     suspend fun allMessages(): List<MessageEntity>
@@ -245,13 +244,9 @@ interface ChatDao {
     @Query("DELETE FROM messages WHERE conversationId = :conversationId")
     suspend fun deleteMessages(conversationId: Long)
 
+    /** Messages cascade from the foreign key, so this is the whole of clearing chat history. */
     @Query("DELETE FROM conversations")
     suspend fun deleteAllConversations()
-
-    @Transaction
-    suspend fun clearHistory() {
-        deleteAllConversations() // messages cascade
-    }
 }
 
 @Dao

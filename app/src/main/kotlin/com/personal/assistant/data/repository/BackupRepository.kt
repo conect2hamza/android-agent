@@ -108,7 +108,7 @@ class BackupRepository(
             logDao.deleteAll()
             taskDao.deleteAll()
             memoryDao.deleteAll()
-            chatDao.clearHistory()
+            chatDao.deleteAllConversations()
         }
 
         val categoryIds = mutableMapOf<Long, Long>()
@@ -181,7 +181,7 @@ class BackupRepository(
         logDao.deleteAll()
         taskDao.deleteAll()
         memoryDao.deleteAll()
-        chatDao.clearHistory()
+        chatDao.deleteAllConversations()
         reminders.rescheduleAll()
     }
 
