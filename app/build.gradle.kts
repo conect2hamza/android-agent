@@ -18,6 +18,19 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Without this, every machine signs with its own auto-generated ~/.android/debug.keystore. Two CI
+    // builds land on two different runners, produce two different signing identities, and Android
+    // refuses to install the second over the first with a bare "App not installed". A committed debug
+    // key makes every build upgrade in place. It protects nothing and is not a release key.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -26,6 +39,7 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

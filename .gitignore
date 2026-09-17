@@ -10,4 +10,7 @@ captures/
 *.apk
 *.aab
 *.keystore
+# ...except the fixed debug key. It is a throwaway, publicly-known-password key whose only job is
+# making every build signable with the same identity so installs can upgrade in place.
+!app/debug.keystore
 /models/*.gguf
