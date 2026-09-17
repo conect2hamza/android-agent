@@ -14,8 +14,6 @@ import androidx.core.view.WindowCompat
 import com.personal.assistant.data.repository.AppSettings
 import com.personal.assistant.ui.AssistantApp
 import com.personal.assistant.ui.theme.AssistantTheme
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import android.os.Build
 
 class MainActivity : ComponentActivity() {
@@ -40,11 +38,13 @@ class MainActivity : ComponentActivity() {
             notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
 
+        // Collected inside composition rather than pinned to the application scope: an eagerly
+        // started collector there is never cancelled, so every rotation would leave another one
+        // running for the life of the process.
         val settingsFlow = container.settingsRepository.observe()
-            .stateIn(container.applicationScope, SharingStarted.Eagerly, AppSettings())
 
         setContent {
-            val settings by settingsFlow.collectAsState()
+            val settings by settingsFlow.collectAsState(initial = AppSettings())
             var unlocked by remember { mutableStateOf(false) }
 
             AssistantTheme(choice = settings.theme) {

@@ -138,7 +138,12 @@ class AlarmScheduler(
 
     private fun cancel(requestCode: Int) {
         val manager = alarmManager ?: return
-        val intent = Intent(context, ReminderReceiver::class.java)
+        // The action must match the one used when scheduling: PendingIntent lookup compares intents
+        // with filterEquals, which takes the action into account. Without it the existing alarm is
+        // never found and cancelling silently does nothing.
+        val intent = Intent(context, ReminderReceiver::class.java).apply {
+            action = alarmAction(requestCode)
+        }
         PendingIntent.getBroadcast(
             context,
             requestCode,
@@ -152,7 +157,7 @@ class AlarmScheduler(
 
     private fun pendingIntent(reminder: Reminder): PendingIntent {
         val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = "com.personal.assistant.alarm.${reminder.requestCode}"
+            action = alarmAction(reminder.requestCode)
             putExtra(ReminderReceiver.EXTRA_TASK_ID, reminder.taskId ?: -1L)
             putExtra(ReminderReceiver.EXTRA_KIND, reminder.kind.name)
             putExtra(ReminderReceiver.EXTRA_REQUEST_CODE, reminder.requestCode)
@@ -164,6 +169,8 @@ class AlarmScheduler(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
     }
+
+    private fun alarmAction(requestCode: Int): String = "com.personal.assistant.alarm.$requestCode"
 
     companion object {
         private const val TAG = "AlarmScheduler"
